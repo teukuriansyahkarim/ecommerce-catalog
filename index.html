@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Website E-commerce dengan VueJS dan API</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+<body>
+  <div id="app">
+    <h1>Daftar Produk</h1>
+    <div v-for="product in products" :key="product.id">
+      <h2>{{ product.title }}</h2>
+      <img :src="product.image" :alt="product.title">
+      <p>{{ product.description }}</p>
+      <p>Harga: {{ product.price }}</p>
+      <p>Kategori: {{ product.category }}</p>
+    </div>
+    <button @click="nextProduct">Next Product</button>
+  </div>
+  
+  <script>
+    new Vue({
+      el: '#app',
+      data: {
+        products: [],
+        index: 1
+      },
+      methods: {
+        nextProduct: function() {
+          this.index++;
+          if (this.index > 20) {
+            this.index = 1;
+          }
+          this.fetchProducts();
+        },
+        fetchProducts: function() {
+          axios.get('https://fakestoreapi.com/products/' + this.index)
+            .then(response => {
+              if (response.data.category === 'men’s clothing' || response.data.category === 'women’s clothing') {
+                this.products = response.data;
+              }
+            })
+            .catch(error => {
+              console.log(error);
+            });
+        }
+      },
+      mounted: function() {
+        this.fetchProducts();
+      }
+    });
+  </script>
+</body>
+</html>
